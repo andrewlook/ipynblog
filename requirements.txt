@@ -1,0 +1,6 @@
+PyDrive
+nbformat
+nbconvert
+jupyter
+pygithub
+jinja2
