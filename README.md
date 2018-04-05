@@ -20,8 +20,8 @@ process (author, modified date, etc) to be used when rendering the templates. Th
 metadata can be stored as JSON alongside the downloaded notebook file.
 ```
 jupyter2distill download \
-    --colab-url <url> \
-    --output-dir ./notebooks 
+    --url <url> \
+    --output ./notebooks 
 ```
 
 TODOs:
@@ -32,10 +32,10 @@ TODOs:
 Often we'll want to bootstrap a git repository into which we can download our notebook
 and run the conversion.
 ```
-jupyter2distill init_repo \
+jupyter2distill repo \
     --notebook ./notebooks/test.ipynb \
     --metadata ./notebooks/test.ipynb.meta \
-    --cookiecutter-url <url>
+    --cookiecutter <url>
 ```
 
 TODOs:
@@ -50,7 +50,7 @@ in the template. This can streamline the process of re-rendering from a notebook
 ```
 jupyter2distill template \
     --type distill_v2 \
-    --output_path ./templates
+    --output ./templates
 
 # outputs to './templates/distill_v2.tpl'
 ```
