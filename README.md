@@ -19,6 +19,16 @@ Here's a way to download notebooks from Google Colab and extract some metadata i
 process (author, modified date, etc) to be used when rendering the templates. This
 metadata can be stored as JSON alongside the downloaded notebook file.
 
+```bash
+#
+# Complete PyDrive setup before running this
+#
+jupyter2distill download <url> [ --output ./notebooks ]
+```
+
+
+#### PyDrive Setup: Default
+
 First, you must have a set of credentials from the google API's console. Follow the
 instructions in the [pydrive quickstart](http://pythonhosted.org/PyDrive/quickstart.html)
 to get your credentials file.
@@ -46,10 +56,23 @@ PYDRIVE_CLIENT_CONFIG_FILE=${HOME}/.gcloud_client_secrets.json
 PYDRIVE_SAVED_CREDENTIALS_FILE=${HOME}/.gcloud_drive_credentials.json
 ```
 
-```bash
-jupyter2distill download <url> [ --output ./notebooks ]
-```
+#### PyDrive Setup: Advanced
 
+Instead of defining the above 2 env vars, you may also choose to instead provide a
+[settings.yaml](http://pythonhosted.org/PyDrive/oauth.html#sample-settings-yaml) file,
+and saving its location as an env var named `PYDRIVE_SETTINGS_YAML`.
+
+For the sake of comparison, `jupyter2distill`'s default behavior corresponds to the following `settings.yaml` configuration:
+```yaml
+client_config_backend: file
+client_config_file: ${PYDRIVE_CLIENT_CONFIG_FILE}
+
+save_credentials: True
+save_credentials_backend: file
+save_credentials_file: ${PYDRIVE_SAVED_CREDENTIALS_FILE}
+
+get_refresh_token: True
+```
 
 ### Initializing a Static Site Repository
 

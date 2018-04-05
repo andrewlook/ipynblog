@@ -28,7 +28,24 @@ def colab_gdrive_id(url):
 
 
 def get_gdrive():
-    gauth = GoogleAuth()
+    gauth = None
+    pydrive_settings_yaml = os.getenv('PYDRIVE_SETTINGS_YAML')
+    client_config_file = os.getenv('PYDRIVE_CLIENT_CONFIG_FILE')
+    saved_credentials_file = os.getenv('PYDRIVE_SAVED_CREDENTIALS_FILE')
+    
+    assert (client_config_file and saved_credentials_file) or pydrive_settings_yaml, \
+        'env vars must be set: PYDRIVE_SETTINGS_YAML or PYDRIVE_CLIENT_CONFIG_FILE '\
+        'and PYDRIVE_SAVED_CREDENTIALS_FILE'
+    if pydrive_settings_yaml:
+        gauth = GoogleAuth(settings_file=pydrive_settings_yaml)
+    else:
+        gauth = GoogleAuth()
+        gauth.settings.client_config_backend = 'file'
+        gauth.settings.client_config_file = client_config_file
+        gauth.settings.save_credentials = True
+        gauth.settings.save_credentials_backend = 'file'
+        gauth.settings.save_credentials_file = saved_credentials_file
+        gauth.settings.get_refresh_token = True
     gauth.CommandLineAuth()
     drive = GoogleDrive(gauth)
     return drive
