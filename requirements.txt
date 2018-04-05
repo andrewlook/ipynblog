@@ -1,6 +1,12 @@
-PyDrive
+# related to notebook conversion, which is common to all use cases
 nbformat
 nbconvert
 jupyter
-pygithub
 jinja2
+
+# related to IO / external service integration, installation isn't needed
+# for all commands, so I add checks on invocation only when those commands
+# are actually called.
+PyDrive
+pygithub
+cookiecutter
