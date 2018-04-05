@@ -1,3 +1,4 @@
+import os
 import sys
 
 from argparse import ArgumentParser
@@ -7,11 +8,19 @@ USAGE = "Usage: jupyter2distill download|repo|template|render [OPTIONS]"
 
 def run_download(url, output):
     print('url = %s, output = %s' % (url, output))
+    from jupyter2distill.download import download_colab
+    download_colab(url, notebook_dir=output)
 
 
-def run_repo(notebook, metadata, cookiecutter_url):
-    print('notebook = %s, metadata = %s, cookiecutter_url = %s' %
-          (notebook, metadata, cookiecutter_url))
+def run_repo(cookiecutter_url, notebook_fname):
+    metadata_fname = None
+    if notebook_fname and os.path.isfile(notebook_fname):
+        metadata_fname = notebook_fname + '.meta'
+
+    print('cookiecutter_url = %s, notebook_fname = %s, metadata_fname = %s' %
+          (cookiecutter_url, notebook_fname, metadata_fname))
+    from jupyter2distill.repo import generate_repo
+    generate_repo(cookiecutter_url, metadata_file=metadata_fname)
 
 
 def run_template(type, output):
@@ -33,17 +42,16 @@ def main():
     remaining_args = sys.argv[2:] if len(sys.argv) > 2 else []
 
     if command == 'download':
-        parser.add_argument('-u', '--url', help='URL of colab notebook')
-        parser.add_argument('-o', '--output', help='Download dest dir')
+        parser.add_argument('url', help='URL of colab notebook')
+        parser.add_argument('-o', '--output', help='Download dest dir',
+                            default=os.path.join(os.getcwd(), './notebooks'))
         args = parser.parse_args(remaining_args)
         return run_download(args.url, args.output)
     elif command == 'repo':
+        parser.add_argument('cookiecutter',
+                            help='Cookiecutter repo URL')
         parser.add_argument('-n', '--notebook',
                             help='Path to downloaded notebook')
-        parser.add_argument('-m', '--metadata',
-                            help='Path to notebook metadata')
-        parser.add_argument('-c', '--cookiecutter',
-                            help='Cookiecutter repo URL')
         args = parser.parse_args(remaining_args)
         return run_repo(args.notebook, args.metadata, args.cookiecutter)
     elif command == 'template':

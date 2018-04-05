@@ -19,9 +19,7 @@ Here's a way to download notebooks from Google Colab and extract some metadata i
 process (author, modified date, etc) to be used when rendering the templates. This
 metadata can be stored as JSON alongside the downloaded notebook file.
 ```
-jupyter2distill download \
-    --url <url> \
-    --output ./notebooks 
+jupyter2distill download <url> [ --output ./notebooks ]
 ```
 
 TODOs:
@@ -32,14 +30,15 @@ TODOs:
 Often we'll want to bootstrap a git repository into which we can download our notebook
 and run the conversion.
 ```
-jupyter2distill repo \
-    --notebook ./notebooks/test.ipynb \
-    --metadata ./notebooks/test.ipynb.meta \
-    --cookiecutter <url>
+jupyter2distill repo <cookiecutter_url> [ --notebook ./notebooks/test.ipynb ]
+```
+
+For example:
+```
+jupyter2distill repo git@github.com:andrewlook/cookiecutter-svelte-template.git
 ```
 
 TODOs:
-- add reference to sample cookiecutter URLs
 - github integration?
 
 ### Producing an Example Template for Jupyter nbconvert
@@ -64,10 +63,10 @@ Finally, actually running the renderer.
 
 ```
 jupyter2distill render \
-    --notebook-src ./notebooks/test.ipynb \
-    --render-dest <cookiecutter repo root>/public/index.html \
-    --notebook-dest <cookiecutter repo root>/notebooks/ \
-    --images-dest <cookiecutter repo root>/public/images
+    --input ./notebooks/test.ipynb \
+    --output <cookiecutter repo root>/public/index.html \
+    --notebooks-dir <cookiecutter repo root>/notebooks/ \
+    --images-dir <cookiecutter repo root>/public/images
 ```
 
 ## License

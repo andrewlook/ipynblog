@@ -167,8 +167,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         'console_scripts': [
-            # TODO(look) fill this in
-            'sample=sample:main',
+            'jupyter2distill = jupyter2distill.__main__:main',
         ],
     },
 
