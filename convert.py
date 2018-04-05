@@ -42,7 +42,7 @@ def convert_and_save(basedir, local_fname):
     html_path = os.path.join(basedir, 'public/index.html')
     gen_img_dir = os.path.join(basedir, 'public/images')
 
-    assert '.ipynb' in local_fname  # HACK
+    #assert '.ipynb' in local_fname  # HACK
     base_fname = os.path.basename(local_fname)
 
     # 1. copy in the notebook (TODO clean up the outer one?)

@@ -43,7 +43,7 @@ def save_colab_gfile(colab_file, notebook_dir='./notebooks', overwrite=True):
 
     """
     fname = colab_file['title']
-    assert '.ipynb' in fname
+    #assert '.ipynb' in fname
     print('fname = %s, notebook_dir=%s' % (fname, notebook_dir))
     if not os.path.isdir(notebook_dir):
         os.makedirs(notebook_dir)
@@ -93,7 +93,7 @@ def download_colab(url, notebook_dir=None):
     colab_fname = colab_file['title']
 
     colab_extension = colab_file['fileExtension']
-    assert colab_extension == 'ipynb', 'extension should be ipynb but is: "%s"' % colab_extension
+    #assert colab_extension == 'ipynb', 'extension should be ipynb but is: "%s"' % colab_extension
 
     project_name = colab_fname.replace('.'+colab_extension, '')
     project_slug = project_name.lower().replace(' ', '_').replace('-', '_')
