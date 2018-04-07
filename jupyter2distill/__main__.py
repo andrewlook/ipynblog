@@ -53,7 +53,7 @@ def main():
         parser.add_argument('-n', '--notebook',
                             help='Path to downloaded notebook')
         args = parser.parse_args(remaining_args)
-        return run_repo(args.notebook, args.metadata, args.cookiecutter)
+        return run_repo(args.cookiecutter, args.notebook)
     elif command == 'template':
         parser.add_argument('-t', '--type',
                             help='Type of nbconvert template to include')

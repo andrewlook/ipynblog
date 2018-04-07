@@ -5,11 +5,13 @@ Utility for converting a jupyter/colab notebook into a publishable static site c
 ## Installation
 
 ```
-pip install jupyter2distill
-
 # install latest directly f/ github
 pip install git+https://github.com/andrewlook/jupyter2distill.git#egg=jupyter2distill
+
 ```
+
+TODO:
+- publish to pypi
 
 ## Usage
 
