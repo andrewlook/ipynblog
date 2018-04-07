@@ -45,7 +45,7 @@
 
             <d-code block language="python" class="l-page" style="overflow: hidden; text-overflow: ellipsis;">
                 {# no highlight_code #}
-                {{ cell.source }}
+                {{ cell.source | ansi2html }}
             </d-code>
 
 
