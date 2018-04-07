@@ -114,3 +114,4 @@ post__something/
 colab2distill_demo/
 notebooks/
 deepdream*
+.pytest_cache/

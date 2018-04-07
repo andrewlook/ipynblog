@@ -4,8 +4,6 @@ import os
 from dateutil import parser as dt_parser
 from pprint import pprint
 
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
 #
 # Avoid python 2/3 nonsense from urllib:
 # - http://python-future.org/compatible_idioms.html#urllib-module
@@ -37,6 +35,12 @@ def get_gdrive():
         'env vars must be set: PYDRIVE_SETTINGS_YAML '\
         'or PYDRIVE_CLIENT_CONFIG_FILE '\
         'and PYDRIVE_SAVED_CREDENTIALS_FILE'
+    
+    # import these only if function gets called, so non-colab users don't need to
+    # install/configure PyDrive if they're not going to download f/ Colab.
+    from pydrive.auth import GoogleAuth
+    from pydrive.drive import GoogleDrive
+    
     if settings_yaml:
         gauth = GoogleAuth(settings_file=settings_yaml)
     else:
