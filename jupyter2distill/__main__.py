@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 
 from argparse import ArgumentParser
@@ -25,11 +26,24 @@ def run_repo(cookiecutter_url, notebook_fname):
 
 def run_template(type, output):
     print('type = %s, output = %s' % (type, output))
+    dirname = os.path.dirname(__file__)
+    templates_dir = os.path.join(dirname, 'templates')
+    template_fname = '%s.tpl' % type
+    template_path = os.path.join(templates_dir, template_fname)
+    if not os.path.isfile(template_path):
+        raise ValueError('invalid template type "%s"; file note found: %s' %
+                         (type, template_path))
+    if not os.path.isdir(output):
+        raise ValueError('output directory "%s" does not exist' % output)
+    
+    dest_path = os.path.join(output, template_fname)
+    shutil.copy2(template_path, dest_path)
 
 
-def run_render(input, output, notebooks_dir, images_dir):
-    print('input = %s, output = %s, notebooks_dir = %s, images_dir = %s'
-          % (input, output, notebooks_dir, images_dir))
+def run_render(input, output, template, notebooks_dir, images_dir):
+    print('input = %s, output = %s, template = %s, '
+          'notebooks_dir = %s, images_dir = %s'
+          % (input, output, template, notebooks_dir, images_dir))
 
 
 def main():
@@ -66,13 +80,15 @@ def main():
                             help='Path to downloaded notebook')
         parser.add_argument('-o', '--output',
                             help='Path to render notebook to')
+        parser.add_argument('--template',
+                            help='Path to nbconvert template to use')
         parser.add_argument('--notebooks-dir',
                             help='Path to copy unrendered notebook to')
         parser.add_argument('--images-dir',
                             help='Path to extract image assets to')
         args = parser.parse_args(remaining_args)
-        return run_render(args.input, args.output, args.notebooks_dir,
-                          args.images_dir)
+        return run_render(args.input, args.output, args.template,
+                          args.notebooks_dir, args.images_dir)
     else:
         print('command "%s" not recognized\n\n%s' % (command, USAGE))
         sys.exit(1)
