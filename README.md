@@ -26,6 +26,55 @@ metadata can be stored as JSON alongside the downloaded notebook file.
 jupyter2distill download <url> [ --output ./notebooks ]
 ```
 
+### Initializing a Static Site Repository
+
+Often we'll want to bootstrap a git repository into which we can download our notebook
+and run the conversion.
+
+```bash
+jupyter2distill repo <cookiecutter_url> [ --notebook ./notebooks/test.ipynb ]
+```
+
+For example:
+```bash
+jupyter2distill repo git@github.com:andrewlook/cookiecutter-svelte-template.git
+```
+
+TODOs:
+- github integration?
+
+### Producing an Example Template for Jupyter nbconvert
+
+It's likely that the jupyter nbconvert template may need some tweaks. So we recommend
+dumping the nbconvert template into the repo and making any necessary modifications
+in the template. This can streamline the process of re-rendering from a notebook.
+
+```bash
+jupyter2distill template \
+    --type distill_v2 \
+    --output ./templates
+
+# outputs to './templates/distill_v2.tpl'
+```
+
+TODOs:
+- add reference for where to learn about nbconvert formatting, reference `basic.tpl`
+
+### Rendering the Jupyter Notebook
+
+Finally, actually running the renderer.
+
+```bash
+jupyter2distill render \
+    --input ./notebooks/test.ipynb \
+    --output <cookiecutter repo root>/public/index.html \
+    --notebooks-dir <cookiecutter repo root>/notebooks/ \
+    --images-dir <cookiecutter repo root>/public/images
+```
+
+## Credentials Setup Instructions
+
+### PyDrive
 
 #### PyDrive Setup: Default
 
@@ -74,51 +123,6 @@ save_credentials_file: ${PYDRIVE_SAVED_CREDENTIALS_FILE}
 get_refresh_token: True
 ```
 
-### Initializing a Static Site Repository
-
-Often we'll want to bootstrap a git repository into which we can download our notebook
-and run the conversion.
-
-```bash
-jupyter2distill repo <cookiecutter_url> [ --notebook ./notebooks/test.ipynb ]
-```
-
-For example:
-```bash
-jupyter2distill repo git@github.com:andrewlook/cookiecutter-svelte-template.git
-```
-
-TODOs:
-- github integration?
-
-### Producing an Example Template for Jupyter nbconvert
-
-It's likely that the jupyter nbconvert template may need some tweaks. So we recommend
-dumping the nbconvert template into the repo and making any necessary modifications
-in the template. This can streamline the process of re-rendering from a notebook.
-
-```bash
-jupyter2distill template \
-    --type distill_v2 \
-    --output ./templates
-
-# outputs to './templates/distill_v2.tpl'
-```
-
-TODOs:
-- add reference for where to learn about nbconvert formatting, reference `basic.tpl`
-
-### Rendering the Jupyter Notebook
-
-Finally, actually running the renderer.
-
-```bash
-jupyter2distill render \
-    --input ./notebooks/test.ipynb \
-    --output <cookiecutter repo root>/public/index.html \
-    --notebooks-dir <cookiecutter repo root>/notebooks/ \
-    --images-dir <cookiecutter repo root>/public/images
-```
 
 ## License
 
