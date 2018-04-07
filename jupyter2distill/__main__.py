@@ -35,15 +35,17 @@ def run_template(type, output):
                          (type, template_path))
     if not os.path.isdir(output):
         raise ValueError('output directory "%s" does not exist' % output)
-    
+
     dest_path = os.path.join(output, template_fname)
     shutil.copy2(template_path, dest_path)
 
 
-def run_render(input, output, template, notebooks_dir, images_dir):
-    print('input = %s, output = %s, template = %s, '
+def run_render(local_fname, output, template, notebooks_dir, images_dir):
+    print('local_fname = %s, output = %s, template = %s, '
           'notebooks_dir = %s, images_dir = %s'
-          % (input, output, template, notebooks_dir, images_dir))
+          % (local_fname, output, template, notebooks_dir, images_dir))
+    from jupyter2distill.convert import convert_and_save
+    convert_and_save(local_fname, output, template, notebooks_dir, images_dir)
 
 
 def main():

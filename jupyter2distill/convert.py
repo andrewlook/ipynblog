@@ -34,18 +34,16 @@ def save_images(img_dir, resources):
         print('wrote ' + img_fname)
 
 
-def convert_and_save(basedir, local_fname):
+def convert_and_save(local_fname, output, template, notebooks_dir, images_dir):
     # paths relative to root of generated project directory
-    # TODO make these configurable according to the cookiecutter?
-    gen_nb_dir = os.path.join(basedir, 'notebooks')
-    gen_nb_tpl = os.path.join(gen_nb_dir, 'nbconvert.tpl')
-    html_path = os.path.join(basedir, 'public/index.html')
-    gen_img_dir = os.path.join(basedir, 'public/images')
+    gen_nb_dir = notebooks_dir  # os.path.join(basedir, 'notebooks')
+    gen_nb_tpl = template  # os.path.join(gen_nb_dir, 'nbconvert.tpl')
+    html_path = output  # os.path.join(basedir, 'public/index.html')
+    gen_img_dir = images_dir  # os.path.join(basedir, 'public/images')
 
-    #assert '.ipynb' in local_fname  # HACK
     base_fname = os.path.basename(local_fname)
 
-    # 1. copy in the notebook (TODO clean up the outer one?)
+    # 1. copy in the notebook
     dest_notebook_path = os.path.join(gen_nb_dir, base_fname)
     copy2(local_fname, dest_notebook_path)
 

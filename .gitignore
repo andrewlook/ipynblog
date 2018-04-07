@@ -113,3 +113,4 @@ settings.yaml
 post__something/
 colab2distill_demo/
 notebooks/
+deepdream*
