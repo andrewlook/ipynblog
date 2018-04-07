@@ -138,3 +138,10 @@
         />
     </div>
 {%- endblock data_jpg %}
+
+{% block data_html scoped -%}
+<div class="output_html rendered_html output_subarea {{ extra_class }}">
+{{ output.data['text/html'] }}
+</div>
+{%- endblock data_html %}
+
