@@ -1,4 +1,4 @@
-# jupyter2distill
+# ipynblog
 
 Utility for converting a jupyter/colab notebook into a publishable static site codebase
 
@@ -6,7 +6,7 @@ Utility for converting a jupyter/colab notebook into a publishable static site c
 
 ```
 # install latest directly f/ github
-pip install git+https://github.com/andrewlook/jupyter2distill.git#egg=jupyter2distill
+pip install git+https://github.com/andrewlook/ipynblog.git#egg=ipynblog
 
 ```
 
@@ -25,7 +25,7 @@ metadata can be stored as JSON alongside the downloaded notebook file.
 #
 # Complete PyDrive setup before running this
 #
-jupyter2distill download <url> [ --output ./notebooks ]
+ipynblog download <url> [ --output ./notebooks ]
 ```
 
 ### Initializing a Static Site Repository
@@ -34,12 +34,12 @@ Often we'll want to bootstrap a git repository into which we can download our no
 and run the conversion.
 
 ```bash
-jupyter2distill repo <cookiecutter_url> [ --notebook ./notebooks/test.ipynb ]
+ipynblog repo <cookiecutter_url> [ --notebook ./notebooks/test.ipynb ]
 ```
 
 For example:
 ```bash
-jupyter2distill repo git@github.com:andrewlook/cookiecutter-svelte-template.git
+ipynblog repo git@github.com:andrewlook/cookiecutter-svelte-template.git
 ```
 
 TODOs:
@@ -52,7 +52,7 @@ dumping the nbconvert template into the repo and making any necessary modificati
 in the template. This can streamline the process of re-rendering from a notebook.
 
 ```bash
-jupyter2distill template \
+ipynblog template \
     --type distill_v2 \
     --output ./templates
 
@@ -67,7 +67,7 @@ TODOs:
 Finally, actually running the renderer.
 
 ```bash
-jupyter2distill render \
+ipynblog render \
     --input ./notebooks/test.ipynb \
     --output <cookiecutter repo root>/public/index.html \
     --notebooks-dir <cookiecutter repo root>/notebooks/ \
@@ -84,7 +84,7 @@ First, you must have a set of credentials from the google API's console. Follow 
 instructions in the [pydrive quickstart](http://pythonhosted.org/PyDrive/quickstart.html)
 to get your credentials file.
 
-Next, set up some environment variables to tell `jupyter2distill` where to find your
+Next, set up some environment variables to tell `ipynblog` where to find your
 google API configuration files. You'll need 2 env vars:
 - `PYDRIVE_CLIENT_CONFIG_FILE`: location of the `client_secrets.json` file provided
   by Google API console.
@@ -113,7 +113,7 @@ Instead of defining the above 2 env vars, you may also choose to instead provide
 [settings.yaml](http://pythonhosted.org/PyDrive/oauth.html#sample-settings-yaml) file,
 and saving its location as an env var named `PYDRIVE_SETTINGS_YAML`.
 
-For the sake of comparison, `jupyter2distill`'s default behavior corresponds to the following `settings.yaml` configuration:
+For the sake of comparison, `ipynblog`'s default behavior corresponds to the following `settings.yaml` configuration:
 ```yaml
 client_config_backend: file
 client_config_file: ${PYDRIVE_CLIENT_CONFIG_FILE}

@@ -4,12 +4,12 @@ import sys
 
 from argparse import ArgumentParser
 
-USAGE = "Usage: jupyter2distill download|repo|template|render [OPTIONS]"
+USAGE = "Usage: ipynblog download|repo|template|render [OPTIONS]"
 
 
 def run_download(url, output):
     print('url = %s, output = %s' % (url, output))
-    from jupyter2distill.download import download_colab
+    from ipynblog.download import download_colab
     download_colab(url, notebook_dir=output)
 
 
@@ -20,7 +20,7 @@ def run_repo(cookiecutter_url, notebook_fname):
 
     print('cookiecutter_url = %s, notebook_fname = %s, metadata_fname = %s' %
           (cookiecutter_url, notebook_fname, metadata_fname))
-    from jupyter2distill.repo import generate_repo
+    from ipynblog.repo import generate_repo
     generate_repo(cookiecutter_url, metadata_file=metadata_fname)
 
 
@@ -44,7 +44,7 @@ def run_render(local_fname, output, template, notebooks_dir, images_dir):
     print('local_fname = %s, output = %s, template = %s, '
           'notebooks_dir = %s, images_dir = %s'
           % (local_fname, output, template, notebooks_dir, images_dir))
-    from jupyter2distill.convert import convert_and_save
+    from ipynblog.convert import convert_and_save
     convert_and_save(local_fname, output, template, notebooks_dir, images_dir)
 
 

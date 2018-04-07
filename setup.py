@@ -32,7 +32,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name='jupyter2distill',  # Required
+    name='ipynblog',  # Required
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -73,7 +73,7 @@ setup(
     #
     # This field corresponds to the "Home-Page" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
-    url='https://github.com/andrewlook/jupyter2distill',  # Optional
+    url='https://github.com/andrewlook/ipynblog',  # Optional
 
     # This should be your name or the name of the organization which owns the
     # project.
@@ -131,7 +131,6 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-        # TODO(look): fill these in
         'nbformat',
         'nbconvert',
         'jupyter',
@@ -167,7 +166,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={  # Optional
         'console_scripts': [
-            'jupyter2distill = jupyter2distill.__main__:main',
+            'ipynblog = ipynblog.__main__:main',
         ],
     },
 
@@ -181,7 +180,7 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/andrewlook/jupyter2distill/issues',
-        'Source': 'https://github.com/andrewlook/jupyter2distill/',
+        'Bug Reports': 'https://github.com/andrewlook/ipynblog/issues',
+        'Source': 'https://github.com/andrewlook/ipynblog/',
     },
 )
