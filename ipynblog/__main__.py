@@ -4,18 +4,7 @@ import sys
 
 from argparse import ArgumentParser
 
-USAGE = "Usage: ipynblog cookiecutter|template|render [OPTIONS]"
-
-
-def run_cookiecutter(cookiecutter_url, notebook_fname):
-    metadata_fname = None
-    if notebook_fname and os.path.isfile(notebook_fname):
-        metadata_fname = notebook_fname + '.meta'
-
-    print('cookiecutter_url = %s, notebook_fname = %s, metadata_fname = %s' %
-          (cookiecutter_url, notebook_fname, metadata_fname))
-    from ipynblog.cookiecutter import generate_cookiecutter
-    generate_cookiecutter(cookiecutter_url, metadata_file=metadata_fname)
+USAGE = "Usage: ipynblog template|render [OPTIONS]"
 
 
 def run_template(type, output):
@@ -51,14 +40,7 @@ def main():
     parser = ArgumentParser()
     remaining_args = sys.argv[2:] if len(sys.argv) > 2 else []
 
-    if command == 'cookiecutter':
-        parser.add_argument('cookiecutter',
-                            help='Cookiecutter repo URL')
-        parser.add_argument('-n', '--notebook',
-                            help='Path to downloaded notebook')
-        args = parser.parse_args(remaining_args)
-        return run_cookiecutter(args.cookiecutter, args.notebook)
-    elif command == 'template':
+    if command == 'template':
         parser.add_argument('-t', '--type',
                             help='Type of nbconvert template to include')
         parser.add_argument('-o', '--output',

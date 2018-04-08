@@ -39,41 +39,24 @@ ipynblog-download <url> [ --dir ./notebooks ]
 Often we'll want to bootstrap a git repository into which we can download our notebook
 and run the conversion.
 
-#### Plain git templates way
+#### Initializing with Git Repos
 
 ```
 ipynblog repo git@github.com:andrewlook/ipynblog-template-distill-svelte.git
 ```
 
-#### (TODO Deprecate) The Cookiecutter way
+#### Initializing with Cookiecutter
+
 ```bash
-ipynblog cookiecutter <cookiecutter_url> [ --notebook ./notebooks/test.ipynb ]
+ipynblog-cookiecutter <cookiecutter_url> [ --metadata ./notebooks/test.ipynb.yaml ]
 ```
 
 For example:
 ```bash
-ipynblog cookiecutter git@github.com:andrewlook/ipynblog-cookiecutter-svelte-template.git
+export COOKIECUTTER_URL=git@github.com:andrewlook/ipynblog-cookiecutter-svelte-template.git
+
+ipynblog-cookiecutter $COOKIECUTTER_URL
 ```
-
-TODOs:
-- github integration?
-
-### Producing an Example Template for Jupyter nbconvert
-
-It's likely that the jupyter nbconvert template may need some tweaks. So we recommend
-dumping the nbconvert template into the repo and making any necessary modifications
-in the template. This can streamline the process of re-rendering from a notebook.
-
-```bash
-ipynblog template \
-    --type distill_v2 \
-    --output ./templates
-
-# outputs to './templates/distill_v2.tpl'
-```
-
-TODOs:
-- add reference for where to learn about nbconvert formatting, reference `basic.tpl`
 
 ### Rendering the Jupyter Notebook
 
