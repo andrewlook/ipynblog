@@ -103,8 +103,9 @@ def main():
         # be sure to clean up temp dir:
         # - after it has been copied in case of success
         # - in case of failure also clean it up
-        print('cleaning up temp_dir {t}'.format(t=temp_proj_root))
-        shutil.rmtree(temp_proj_root)
+        if os.path.exists(temp_proj_root):
+            print('cleaning up temp_dir {t}'.format(t=temp_proj_root))
+            shutil.rmtree(temp_proj_root)
 
 
 if __name__ == '__main__':
