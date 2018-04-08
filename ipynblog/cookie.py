@@ -1,16 +1,17 @@
-import json
+import io
 import os
-
-from cookiecutter.main import cookiecutter
 from pprint import pprint
+
+import yaml
+from cookiecutter.main import cookiecutter
 
 
 def generate_cookiecutter(cookiecutter_url, metadata_file=None):
     notebook_metadata = {}
     if metadata_file and os.path.isfile(metadata_file):
-        with open(metadata_file) as fd:
-            notebook_metadata = json.load(fd)
-    notebook_fname = notebook_metadata['local_fname']
+        with io.open(metadata_file) as fd:
+            notebook_metadata = yaml.load(fd)
+    notebook_fname = metadata_file.replace('.yaml', '')
     project_slug = notebook_metadata['project_slug']
     print('metadata loaded from notebook: ' + notebook_fname)
     print('generating to output dir: ' + project_slug)

@@ -59,7 +59,7 @@ setup(
         'console_scripts': [
             'ipynblog = ipynblog.__main__:main',
             'ipynblog-download = ipynblog.download:main',
-            'ipynblog-cookiecutter = ipynblog.cookiecutter:main',
+            'ipynblog-cookiecutter = ipynblog.cookie:main',
         ],
     },
     project_urls={  # Optional
