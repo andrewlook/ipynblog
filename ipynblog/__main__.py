@@ -4,13 +4,7 @@ import sys
 
 from argparse import ArgumentParser
 
-USAGE = "Usage: ipynblog download|cookiecutter|template|render [OPTIONS]"
-
-
-def run_download(url, output):
-    print('url = %s, output = %s' % (url, output))
-    from ipynblog.download import download_colab
-    download_colab(url, notebook_dir=output)
+USAGE = "Usage: ipynblog cookiecutter|template|render [OPTIONS]"
 
 
 def run_cookiecutter(cookiecutter_url, notebook_fname):
@@ -57,13 +51,7 @@ def main():
     parser = ArgumentParser()
     remaining_args = sys.argv[2:] if len(sys.argv) > 2 else []
 
-    if command == 'download':
-        parser.add_argument('url', help='URL of colab notebook')
-        parser.add_argument('-o', '--output', help='Download dest dir',
-                            default=os.path.join(os.getcwd(), './notebooks'))
-        args = parser.parse_args(remaining_args)
-        return run_download(args.url, args.output)
-    elif command == 'cookiecutter':
+    if command == 'cookiecutter':
         parser.add_argument('cookiecutter',
                             help='Cookiecutter repo URL')
         parser.add_argument('-n', '--notebook',

@@ -1,14 +1,17 @@
 #!/usr/bin/env python
-import json
-import os
-from dateutil import parser as dt_parser
-from pprint import pprint
 
-#
 # Avoid python 2/3 nonsense from urllib:
 # - http://python-future.org/compatible_idioms.html#urllib-module
-#
 from six.moves.urllib.parse import urlparse
+
+import os
+import tempfile
+
+import yaml
+from dateutil import parser as dt_parser
+
+
+_ipynblog_temp_dir = tempfile.mkdtemp(prefix="ipynblog_")
 
 
 def colab_gdrive_id(url):
@@ -26,7 +29,6 @@ def colab_gdrive_id(url):
 
 
 def get_gdrive():
-    gauth = None
     settings_yaml = os.getenv('PYDRIVE_SETTINGS_YAML')
     client_config_file = os.getenv('PYDRIVE_CLIENT_CONFIG_FILE')
     saved_credentials_file = os.getenv('PYDRIVE_SAVED_CREDENTIALS_FILE')
@@ -70,7 +72,6 @@ def save_colab_gfile(colab_file, notebook_dir='./notebooks', overwrite=True):
         - http://pythonhosted.org/PyDrive/pydrive.html
     """
     fname = colab_file['title']
-    # assert '.ipynb' in fname
     print('fname = %s, notebook_dir=%s' % (fname, notebook_dir))
     if not os.path.isdir(notebook_dir):
         os.makedirs(notebook_dir)
@@ -110,37 +111,56 @@ def extract_last_modified_user(gfile):
     return (email, name)
 
 
-def download_colab(url, notebook_dir=None):
+def download_colab(url, notebook_dir=_ipynblog_temp_dir):
+    """
+    Downloads google colab notebook and saves the ipynb file in 'notebook_dir'.
+    Extracts GDrive metadata (name, modified timestamp, username) and saves as
+    yaml alongside the notebook.
+
+    :param url:             URL of Google Colab notebook
+    :param notebook_dir:    Directory in which to save (defaults to temp dir)
+    :return:                File paths of downloaded notebook and yaml metadata
+    """
     drive = get_gdrive()
     colab_file = fetch_colab_gfile(drive, url)
 
     dt = extract_updated_dt(colab_file)
     author_email, author_name = extract_last_modified_user(colab_file)
-
     colab_fname = colab_file['title']
-
     colab_extension = colab_file['fileExtension']
-    # assert colab_extension == 'ipynb', \
-    # 'extension should be ipynb but is: "%s"' % colab_extension
 
     project_name = colab_fname.replace('.'+colab_extension, '')
     project_slug = project_name.lower().replace(' ', '_').replace('-', '_')
 
-    local_fname = save_colab_gfile(colab_file, notebook_dir=notebook_dir)
+    notebook_fname = save_colab_gfile(colab_file, notebook_dir=notebook_dir)
     metadata = dict(
         project_name=project_name,
         project_slug=project_slug,
         colab_url=url,
-        local_fname=local_fname,
         author_name=author_name,
         author_email=author_email,
         dt=dt,
     )
-    local_metadata_fname = local_fname + '.meta'
-    with open(local_metadata_fname, 'w+') as outfile:
-        json.dump(metadata, outfile, indent=2)
+    metadata_fname = notebook_fname + '.yaml'
+    with open(metadata_fname, 'w+') as outfile:
+        yaml.dump(metadata, outfile, indent=2)
+    return notebook_fname, metadata_fname
 
-    print('Downloaded notebook to {f}, saved metadata to: {m}'
-          .format(f=local_fname, m=local_metadata_fname))
-    pprint(metadata)
-    return metadata
+
+def main():
+    import sys
+    from argparse import ArgumentParser
+    parser = ArgumentParser(description='Downloads Google Colab notebooks')
+    parser.add_argument('url', help='URL of colab notebook')
+    parser.add_argument('-d', '--dir', help='Download dest dir',
+                        default=_ipynblog_temp_dir)
+    args = parser.parse_args(sys.argv)
+
+    notebook_fname, metadata_fname = download_colab(url=args.url,
+                                                    notebook_dir=args.output)
+    print('Downloaded notebook to {n}, saved metadata to: {m}'
+          .format(n=notebook_fname, m=metadata_fname))
+
+
+if __name__ == '__main__':
+    main()
