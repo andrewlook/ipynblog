@@ -48,7 +48,8 @@ def main():
             nbconvert_output: ./public/index.html
             images_dir: ./public/images/
         """
-        t = TemplateConfig.load_file(os.path.join(temp_proj_root, 'ipynblog.yaml'))
+        ipynblog_yaml_path = os.path.join(temp_proj_root, 'ipynblog.yaml')
+        t = TemplateConfig.load_file(ipynblog_yaml_path)
         cfg = t['ipynblog_template']
 
         # find the folder in the generated project structure containing the example notebook.
@@ -78,6 +79,8 @@ def main():
 
         # update config's pointer to which notebook needs to be converted.
         cfg.nbconvert_input = notebook_fname.replace(temp_proj_root, '')
+        # update the YAML file in the generated repo
+        t.dump(ipynblog_yaml_path)
 
         pprint(dict(local_fname=notebook_fname,
                     output=cfg.nbconvert_output,
