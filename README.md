@@ -33,13 +33,20 @@ ipynblog download <url> [ --output ./notebooks ]
 Often we'll want to bootstrap a git repository into which we can download our notebook
 and run the conversion.
 
+#### Plain git templates way
+
+```
+ipynblog repo git@github.com:andrewlook/ipynblog-template-distill-svelte.git
+```
+
+#### (TODO Deprecate) The Cookiecutter way
 ```bash
-ipynblog repo <cookiecutter_url> [ --notebook ./notebooks/test.ipynb ]
+ipynblog cookiecutter <cookiecutter_url> [ --notebook ./notebooks/test.ipynb ]
 ```
 
 For example:
 ```bash
-ipynblog repo git@github.com:andrewlook/cookiecutter-svelte-template.git
+ipynblog cookiecutter git@github.com:andrewlook/ipynblog-cookiecutter-svelte-template.git
 ```
 
 TODOs:

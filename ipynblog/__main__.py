@@ -4,7 +4,7 @@ import sys
 
 from argparse import ArgumentParser
 
-USAGE = "Usage: ipynblog download|repo|template|render [OPTIONS]"
+USAGE = "Usage: ipynblog download|cookiecutter|template|render [OPTIONS]"
 
 
 def run_download(url, output):
@@ -13,15 +13,15 @@ def run_download(url, output):
     download_colab(url, notebook_dir=output)
 
 
-def run_repo(cookiecutter_url, notebook_fname):
+def run_cookiecutter(cookiecutter_url, notebook_fname):
     metadata_fname = None
     if notebook_fname and os.path.isfile(notebook_fname):
         metadata_fname = notebook_fname + '.meta'
 
     print('cookiecutter_url = %s, notebook_fname = %s, metadata_fname = %s' %
           (cookiecutter_url, notebook_fname, metadata_fname))
-    from ipynblog.repo import generate_repo
-    generate_repo(cookiecutter_url, metadata_file=metadata_fname)
+    from ipynblog.cookiecutter import generate_cookiecutter
+    generate_cookiecutter(cookiecutter_url, metadata_file=metadata_fname)
 
 
 def run_template(type, output):
@@ -63,13 +63,13 @@ def main():
                             default=os.path.join(os.getcwd(), './notebooks'))
         args = parser.parse_args(remaining_args)
         return run_download(args.url, args.output)
-    elif command == 'repo':
+    elif command == 'cookiecutter':
         parser.add_argument('cookiecutter',
                             help='Cookiecutter repo URL')
         parser.add_argument('-n', '--notebook',
                             help='Path to downloaded notebook')
         args = parser.parse_args(remaining_args)
-        return run_repo(args.cookiecutter, args.notebook)
+        return run_cookiecutter(args.cookiecutter, args.notebook)
     elif command == 'template':
         parser.add_argument('-t', '--type',
                             help='Type of nbconvert template to include')

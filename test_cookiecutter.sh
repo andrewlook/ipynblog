@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 SAMPLE_COLAB_URL="https://colab.research.google.com/drive/1fjv0zVC0l-81QI7AtJjZPMfYRiynOJCB#scrollTo=Kp3QKj1KIaaO"
-SAMPLE_COOKIECUTTER_REPO="git@github.com:andrewlook/cookiecutter-svelte-template.git"
+SAMPLE_COOKIECUTTER_REPO="git@github.com:andrewlook/ipynblog-cookiecutter-svelte-template.git"
 
 NOTEBOOKS_DIR=$(pwd)/notebooks
 
@@ -11,7 +11,7 @@ NOTEBOOK_NAME=$(ls ./notebooks | grep -v ".meta" | head -n1)
 NOTEBOOK_SLUG=$(echo ${NOTEBOOK_NAME} | tr '-' '_' | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
 NOTEBOOK_PATH=${NOTEBOOKS_DIR}/${NOTEBOOK_NAME}
 
-ipynblog repo --notebook ${NOTEBOOK_PATH} ${SAMPLE_COOKIECUTTER_REPO}
+ipynblog cookiecutter --notebook ${NOTEBOOK_PATH} ${SAMPLE_COOKIECUTTER_REPO}
 
 ls -l ${NOTEBOOK_SLUG}/
 
