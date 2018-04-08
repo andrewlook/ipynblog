@@ -1,4 +1,5 @@
 # related to notebook conversion, which is common to all use cases
+pyyaml
 nbformat
 nbconvert
 jupyter
