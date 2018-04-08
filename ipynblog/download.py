@@ -85,7 +85,7 @@ def save_colab_gfile(colab_file, notebook_dir='./notebooks', overwrite=True,
         raise Exception("%s already exists" % local_fname)
 
     colab_file.GetContentFile(local_fname)
-    return local_fname, fname
+    return local_fname
 
 
 def extract_updated_dt(gfile):

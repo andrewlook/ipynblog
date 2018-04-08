@@ -50,7 +50,7 @@ def main():
         """
         ipynblog_yaml_path = os.path.join(temp_proj_root, 'ipynblog.yaml')
         t = TemplateConfig.load_file(ipynblog_yaml_path)
-        cfg = t['ipynblog_template']
+        cfg = t.ipynblog_template
 
         # find the folder in the generated project structure containing the example notebook.
         # this is where the input notebook will get copied into the repo.
@@ -87,10 +87,13 @@ def main():
                     template=cfg.nbconvert_template,
                     images_dir=cfg.images_dir))
 
+        def __tpr(f):
+            return os.path.join(temp_proj_root, f)
+
         convert_and_save(local_fname=notebook_fname,
-                         output=cfg.nbconvert_output,
-                         template=cfg.nbconvert_template,
-                         images_dir=cfg.images_dir)
+                         output=__tpr(cfg.nbconvert_output),
+                         template=__tpr(cfg.nbconvert_template),
+                         images_dir=__tpr(cfg.images_dir))
 
         # if everything converted properly, copy the temporary dir into CWD() and rename it
         print('mv --> ', temp_proj_root, os.path.join(os.getcwd(), project_name))
