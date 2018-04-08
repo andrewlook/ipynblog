@@ -59,16 +59,7 @@ def main():
 
         if args.colab_url:
 
-            """
-            Example Notebook Metadata YAML
-            ------------------------------
-            author_email: andrew.m.look@gmail.com
-            author_name: Andrew Look
-            colab_url: https://colab.research.google.com/drive/1fjv0zVC0l-81QI7AtJjZPMfYRiynOJCB#scrollTo=Kp3QKj1KIaaO
-            dt: '2018-04-05'
-            project_name: deepdream--startup-breakfast--final
-            project_slug: deepdream__startup_breakfast__final
-            """
+
             notebook_fname, _, metadata = download_colab(args.colab_url, notebook_dir=notebooks_dir)
 
             if not args.name:

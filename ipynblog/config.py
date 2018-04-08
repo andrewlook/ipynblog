@@ -1,28 +1,36 @@
-class TemplateConfig(object):
-    ipynb_template = None
+import yaml
 
-    def __init__(self, ipynb_template=None):
-        self.ipynb_template = ipynb_template
+class TemplateConfig(yaml.YAMLObject):
+    yaml_tag = u'!TemplateConfig'
+    ipynblog_template = None
+
+    def __init__(self, ipynblog_template=None):
+        self.ipynblog_template = ipynblog_template
 
 
-class IpynbTemplate(object):
+class IpynbTemplate(yaml.YAMLObject):
+    yaml_tag = u'!IpynbTemplate'
     nbconvert_template = None
     nbconvert_input = None
     nbconvert_output = None
     images_dir = None
+    colab_url = None
 
     def __init__(self,
                  nbconvert_template=None,
                  nbconvert_input=None,
-                 nbcovnert_output=None,
-                 images_dir=None):
+                 nbconvert_output=None,
+                 images_dir=None,
+                 colab_url=None):
         self.nbconvert_template = nbconvert_template
         self.nbconvert_input = nbconvert_input
-        self.nbconvert_output = nbcovnert_output
+        self.nbconvert_output = nbconvert_output
         self.images_dir = images_dir
+        self.colab_url = colab_url
 
 
-class NotebookMetadata(object):
+class NotebookMetadata(yaml.YAMLObject):
+    yaml_tag = u'!NotebookMetadata'
     author_email = None
     author_name = None
     colab_url = None
@@ -43,3 +51,5 @@ class NotebookMetadata(object):
         self.dt = dt
         self.project_name = project_name
         self.project_slug = project_slug
+
+
