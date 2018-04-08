@@ -7,8 +7,9 @@ from six.moves.urllib.parse import urlparse
 import os
 import tempfile
 
-import yaml
 from dateutil import parser as dt_parser
+
+from ipynblog import utils
 
 
 _ipynblog_temp_dir = tempfile.mkdtemp(prefix="ipynblog_")
@@ -133,17 +134,15 @@ def download_colab(url, notebook_dir=_ipynblog_temp_dir):
     project_slug = project_name.lower().replace(' ', '_').replace('-', '_')
 
     notebook_fname = save_colab_gfile(colab_file, notebook_dir=notebook_dir)
-    metadata = dict(
+
+    metadata_fname = utils.dump_yaml(dest_path=notebook_fname+'.yaml', attrs=dict(
         project_name=project_name,
         project_slug=project_slug,
         colab_url=url,
         author_name=author_name,
         author_email=author_email,
         dt=dt,
-    )
-    metadata_fname = notebook_fname + '.yaml'
-    with open(metadata_fname, 'w+') as outfile:
-        yaml.dump(metadata, outfile, indent=2)
+    ))
     return notebook_fname, metadata_fname
 
 
@@ -154,10 +153,11 @@ def main():
     parser.add_argument('url', help='URL of colab notebook')
     parser.add_argument('-d', '--dir', help='Download dest dir',
                         default=_ipynblog_temp_dir)
-    args = parser.parse_args(sys.argv)
+    args = parser.parse_args(sys.argv[1:])
+    print(args.url)
 
     notebook_fname, metadata_fname = download_colab(url=args.url,
-                                                    notebook_dir=args.output)
+                                                    notebook_dir=args.dir)
     print('Downloaded notebook to {n}, saved metadata to: {m}'
           .format(n=notebook_fname, m=metadata_fname))
 
