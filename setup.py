@@ -44,8 +44,9 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
-	'future',
-	'six',
+        'pyyaml',
+        'future',
+        'six',
         'nbformat',
         'nbconvert',
         'jupyter',
@@ -57,6 +58,7 @@ setup(
     entry_points={
         'console_scripts': [
             'ipynblog = ipynblog.__main__:main',
+            'ipynblog-download = ipynblog.download:main',
         ],
     },
     project_urls={  # Optional
