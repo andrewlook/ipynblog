@@ -19,13 +19,6 @@ ls -l ${NOTEBOOK_SLUG}/
 GEN_NOTEBOOKS_DIR=${NOTEBOOK_SLUG}/notebooks
 GEN_PUBLIC_DIR=${NOTEBOOK_SLUG}/public
 
-ipynblog template -t distill_v2 -o ${GEN_NOTEBOOKS_DIR}
-
-TEMPLATE_PATH=${GEN_NOTEBOOKS_DIR}/distill_v2.tpl
-
-ipynblog render \
-    -i ${NOTEBOOK_PATH} \
-    -o ${GEN_PUBLIC_DIR}/index.html \
-    --notebooks-dir ${GEN_NOTEBOOKS_DIR} \
+ipynblog-render ${NOTEBOOK_PATH} ${GEN_PUBLIC_DIR}/index.html \
     --images-dir ${GEN_PUBLIC_DIR}/images \
-    --template ${TEMPLATE_PATH}
+    --template ${GEN_NOTEBOOKS_DIR}/nbconvert.tpl

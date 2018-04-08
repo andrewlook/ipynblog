@@ -59,6 +59,7 @@ setup(
         'console_scripts': [
             'ipynblog = ipynblog.__main__:main',
             'ipynblog-download = ipynblog.download:main',
+            'ipynblog-render = ipynblog.render:main',
             'ipynblog-cookiecutter = ipynblog.cookie:main',
         ],
     },

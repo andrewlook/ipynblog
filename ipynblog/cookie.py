@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import io
 import os
 from pprint import pprint
@@ -24,6 +25,29 @@ def generate_cookiecutter(cookiecutter_url, metadata_file=None):
     #
     cookiecutter(cookiecutter_url, extra_context=notebook_metadata)
     return project_slug
+
+
+"""
+def run_template():
+    parser = ArgumentParser()
+    parser.add_argument('-t', '--type',
+                        help='Type of nbconvert template to include')
+    parser.add_argument('-o', '--output',
+                        help='Template dest dir')
+    args = parser.parse_args(sys.argv)
+    dirname = os.path.dirname(__file__)
+    templates_dir = os.path.join(dirname, 'templates')
+    template_fname = '%s.tpl' % args.type
+    template_path = os.path.join(templates_dir, template_fname)
+    if not os.path.isfile(template_path):
+        raise ValueError('invalid template type "%s"; file note found: %s' %
+                         (args.type, template_path))
+    if not os.path.isdir(args.output):
+        raise ValueError('output directory "%s" does not exist' % output)
+
+    dest_path = os.path.join(args.output, template_fname)
+    shutil.copy2(template_path, dest_path)
+"""
 
 
 def main():

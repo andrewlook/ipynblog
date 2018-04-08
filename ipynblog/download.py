@@ -11,7 +11,6 @@ from dateutil import parser as dt_parser
 
 from ipynblog import utils
 
-
 _ipynblog_temp_dir = tempfile.mkdtemp(prefix="ipynblog_")
 
 
@@ -35,15 +34,15 @@ def get_gdrive():
     saved_credentials_file = os.getenv('PYDRIVE_SAVED_CREDENTIALS_FILE')
 
     assert (client_config_file and saved_credentials_file) or settings_yaml, \
-        'env vars must be set: PYDRIVE_SETTINGS_YAML '\
-        'or PYDRIVE_CLIENT_CONFIG_FILE '\
+        'env vars must be set: PYDRIVE_SETTINGS_YAML ' \
+        'or PYDRIVE_CLIENT_CONFIG_FILE ' \
         'and PYDRIVE_SAVED_CREDENTIALS_FILE'
-    
+
     # import these only if function gets called, so non-colab users don't need to
     # install/configure PyDrive if they're not going to download f/ Colab.
     from pydrive.auth import GoogleAuth
     from pydrive.drive import GoogleDrive
-    
+
     if settings_yaml:
         gauth = GoogleAuth(settings_file=settings_yaml)
     else:
@@ -130,20 +129,21 @@ def download_colab(url, notebook_dir=_ipynblog_temp_dir):
     colab_fname = colab_file['title']
     colab_extension = colab_file['fileExtension']
 
-    project_name = colab_fname.replace('.'+colab_extension, '')
+    project_name = colab_fname.replace('.' + colab_extension, '')
     project_slug = project_name.lower().replace(' ', '_').replace('-', '_')
 
     notebook_fname = save_colab_gfile(colab_file, notebook_dir=notebook_dir)
 
-    metadata_fname = utils.dump_yaml(dest_path=notebook_fname+'.yaml', attrs=dict(
+    metadata = dict(
         project_name=project_name,
         project_slug=project_slug,
         colab_url=url,
         author_name=author_name,
         author_email=author_email,
         dt=dt,
-    ))
-    return notebook_fname, metadata_fname
+    )
+    metadata_fname = utils.dump_yaml(dest_path=notebook_fname + '.yaml', attrs=metadata)
+    return notebook_fname, metadata_fname, metadata
 
 
 def main():
@@ -156,8 +156,8 @@ def main():
     args = parser.parse_args(sys.argv[1:])
     print(args.url)
 
-    notebook_fname, metadata_fname = download_colab(url=args.url,
-                                                    notebook_dir=args.dir)
+    notebook_fname, metadata_fname, _ = download_colab(url=args.url,
+                                                       notebook_dir=args.dir)
     print('Downloaded notebook to {n}, saved metadata to: {m}'
           .format(n=notebook_fname, m=metadata_fname))
 
