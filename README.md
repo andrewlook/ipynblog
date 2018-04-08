@@ -7,68 +7,93 @@ Utility for converting a jupyter/colab notebook into a publishable static site c
 ```
 # install latest directly f/ github
 pip install git+https://github.com/andrewlook/ipynblog.git#egg=ipynblog
-
 ```
 
-TODO:
-- publish to pypi
-
 ## Usage: Basic
+
+```bash
+ipynblog <template> [--colab-url <url> | --notebook-file <file>] [--name <name>]
+
+export SVELTE_TEMPLATE=https://github.com/andrewlook/ipynblog-template-distill-svelte.git
+
+#
+# generates static site into ./deepdream-startup-breakfast from local file
+#
+ipynblog $SVELTE_TEMPLATE \
+    --notebook-file deepdream-startup-breakfast.ipynb
+
+# overriding the name, generating into ./startup-breakfast
+ipynblog $SVELTE_TEMPLATE \
+    --notebook-file deepdream-startup-breakfast.ipynb \
+    --name startup-breakfast
+
+#
+# downloading ipynb from Google Colab, then generating into ./startup_breakfast
+# (pydrive must be set up first).
+#
+export SAMPLE_COLAB_URL="https://colab.research.google.com/drive/1fjv0zVC0l-81QI7AtJjZPMfYRiynOJCB#scrollTo=Kp3QKj1KIaaO"
+
+ipynblog $SVELTE_TEMPLATE \
+    --colab-url $SAMPLE_COLAB_URL \
+    --name startup_breakfast
+
+
+cd startup_breakfast
+npm install             # install JS dependencies
+npm run serve           # run local webpack dev server (with hot reload for JS)
+npm run build           # compile HTML/JS for static site deployment
+```
+
+## ipynblog templates
+
+To generate a new static site repo for a converted jupyter notebook, the directory
+structure of [ipynblog-template-distill-svelte](https://github.com/andrewlook/ipynblog-template-distill-svelte.git) looks roughly like this:
+```
+notebooks/
+    test.ipynb             # sample jupyter notebook
+nbconvert/
+    distill_v2_svelte.tpl  # jinja2 template for jupyter's nbconvert
+public/
+    index.html             # result of converting test.ipynb
+    index.bundle.js        # rendered webpack bundle, result of 'npm run build'
+components/                # svelte custom web components go here
+bundles/
+    index.js               # module exporter for webpack
+package.json
+webpack.config.js
+ipynblog.yaml              # tells ipynblog how to render notebook into generated proj
+```
+
+### ipynblog.yaml
+
+Since different projects can have different structures, it may be necessary to use a
+different jinja template for nbconvert (ex. to render plain HTML vs. custom JS
+components, depending on how interactive the post is), or to render the notebook
+into a differently-named file.
+
+The contents of `ipynblog.yaml` look like this:
+```yaml
+ipynblog_template:
+    nbconvert_template: ./nbconvert/distill_v2_svelte.tpl
+    nbconvert_input: ./notebooks/test.ipynb
+    nbconvert_output: ./public/index.html
+    images_dir: ./public/images/
+```
+
+When a project is initialized from this template for `startup-breakfast.ipynb`,
+we want to:
+- replace the placeholder notebook `test.ipynb` with the input notebook,
+- replace `index.html` with the generated output from `distill_v2_svelte.tpl`,
+- extract any inline images from the jupyter notebook and storing them in
+  `public/images`.
 
 
 ## Usage: Advanced
 
-There are several individual versions of the commands for those wishing to
-download / render separately.
-
-### ipynblog-download
-
-Here's a way to download notebooks from Google Colab and extract some metadata in the
-process (author, modified date, etc) to be used when rendering the templates. This
-metadata can be stored as JSON alongside the downloaded notebook file.
-
-**Note:** Be sure to complete the [PyDrive setup](docs/pydrive.md) before running
-this:
-
-```bash
-ipynblog-download <url> [ --dir ./notebooks ]
-```
-
-### Initializing a Static Site Repository
-
-Often we'll want to bootstrap a git repository into which we can download our notebook
-and run the conversion.
-
-#### Initializing with Git Repos
-
-```
-ipynblog repo git@github.com:andrewlook/ipynblog-template-distill-svelte.git
-```
-
-#### Initializing with Cookiecutter
-
-```bash
-ipynblog-cookiecutter <cookiecutter_url> [ --metadata ./notebooks/test.ipynb.yaml ]
-```
-
-For example:
-```bash
-export COOKIECUTTER_URL=git@github.com:andrewlook/ipynblog-cookiecutter-svelte-template.git
-
-ipynblog-cookiecutter $COOKIECUTTER_URL
-```
-
-### Rendering the Jupyter Notebook
-
-Finally, actually running the renderer.
-
-```bash
-ipynblog render \
-    --input ./notebooks/test.ipynb \
-    --output <cookiecutter repo root>/public/index.html \
-    --notebooks-dir <cookiecutter repo root>/notebooks/ \
-    --images-dir <cookiecutter repo root>/public/images
-```
+See [Subcommands](docs/subcommands.md):
+- [ipynblog-render](docs/subcommands.md#ipynblog-render)
+- [ipynblog-download](docs/subcommands.md#ipynblog-download)
+- [ipynblog-cookiecutter](docs/subcommands.md#ipynblog-cookiecutter)
 
 ## Credentials Setup Instructions
 
