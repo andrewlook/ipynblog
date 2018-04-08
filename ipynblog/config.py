@@ -1,6 +1,22 @@
+import io
 import yaml
 
-class TemplateConfig(yaml.YAMLObject):
+
+class YAMLConfigBase(yaml.YAMLObject):
+    def dump(self, **kwargs):
+        return yaml.dump(self, default_flow_style=False, **kwargs)
+
+    @classmethod
+    def load(cls, *args, **kwargs):
+        return yaml.load(*args, **kwargs)
+
+    @classmethod
+    def load_file(cls, fname):
+        with io.open(fname, encoding='utf-8') as fd:
+            return yaml.load(fd)
+
+
+class TemplateConfig(YAMLConfigBase):
     yaml_tag = u'!TemplateConfig'
     ipynblog_template = None
 
@@ -8,7 +24,7 @@ class TemplateConfig(yaml.YAMLObject):
         self.ipynblog_template = ipynblog_template
 
 
-class IpynbTemplate(yaml.YAMLObject):
+class IpynbTemplate(YAMLConfigBase):
     yaml_tag = u'!IpynbTemplate'
     nbconvert_template = None
     nbconvert_input = None
@@ -29,7 +45,7 @@ class IpynbTemplate(yaml.YAMLObject):
         self.colab_url = colab_url
 
 
-class NotebookMetadata(yaml.YAMLObject):
+class NotebookMetadata(YAMLConfigBase):
     yaml_tag = u'!NotebookMetadata'
     author_email = None
     author_name = None

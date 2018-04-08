@@ -16,16 +16,6 @@ def git_clone(url, project_root):
     call('rm -rf {name}/.git/'.format(name=project_root))
 
 
-def find_yaml_config(project_root):
-    yaml_fname = os.path.join(project_root, 'ipynblog.yaml')
-    if not os.path.isfile(yaml_fname):
-        raise ValueError('{yaml_fname} not found from template at {url}'
-                         .format(yaml_fname=yaml_fname))
-    with io.open(yaml_fname) as yaml_fd:
-        ipynblog_config = yaml.load(yaml_fd)
-    return ipynblog_config
-
-
 def git_init(project_root):
     call('git init', cwd=project_root)
     call('git add -f .', cwd=project_root)

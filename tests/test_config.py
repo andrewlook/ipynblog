@@ -64,7 +64,7 @@ def __load_dump(y):
 def test_dump_notebook():
     nb = NotebookMetadata(author_email, author_name, colab_url,
                           dt, project_name, project_slug)
-    assert __load_dump(notebook_yaml) == yaml.dump(nb, default_flow_style=False)
+    assert __load_dump(notebook_yaml) == nb.dump()
 
 
 def test_load_notebook():
@@ -80,7 +80,7 @@ def test_dump_template_config():
         images_dir=images_dir,
         colab_url=colab_url,
     ))
-    assert __load_dump(colab_template_yaml) == yaml.dump(c, default_flow_style=False)
+    assert __load_dump(colab_template_yaml) == c.dump()
 
 
 def test_load_and_dump_template_config():
@@ -95,4 +95,4 @@ def test_load_and_dump_template_config():
     t.colab_url = colab_url
     t.nbconvert_input = updated_nbconvert_input
 
-    assert __load_dump(colab_template_yaml) == yaml.dump(c, default_flow_style=False)
+    assert __load_dump(colab_template_yaml) == c.dump()

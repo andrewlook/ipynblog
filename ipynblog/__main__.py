@@ -6,12 +6,14 @@ import shutil
 import sys
 import tempfile
 
+from pprint import pprint
 from argparse import ArgumentParser
 
-from ipynblog.repo import git_clone
-from ipynblog.repo import find_yaml_config
-from ipynblog.repo import git_init
+from ipynblog.config import TemplateConfig
 from ipynblog.download import download_colab
+from ipynblog.render import convert_and_save
+from ipynblog.repo import git_clone
+from ipynblog.repo import git_init
 
 
 def main():
@@ -46,22 +48,17 @@ def main():
             nbconvert_output: ./public/index.html
             images_dir: ./public/images/
         """
-        t = find_yaml_config(temp_proj_root)['ipynblog_template']
-
-        nbconvert_template = os.path.join(temp_proj_root, t['nbconvert_template'])
-        nbconvert_input = os.path.join(temp_proj_root, t['nbconvert_input'])
-        nbconvert_output = os.path.join(temp_proj_root, t['nbconvert_output'])
-        images_dir = os.path.join(temp_proj_root, t['images_dir'])
+        t = TemplateConfig.load_file(os.path.join(temp_proj_root, 'ipynblog.yaml'))
+        cfg = t['ipynblog_template']
 
         # find the folder in the generated project structure containing the example notebook.
         # this is where the input notebook will get copied into the repo.
-        notebooks_dir = os.path.basename(nbconvert_input)
+        notebooks_dir = os.path.basename(cfg.nbconvert_input)
 
         if args.colab_url:
-
-
+            # record the colab notebook's url in the YAML config, in case sync needed.
+            cfg.colab_url = args.colab_url
             notebook_fname, _, metadata = download_colab(args.colab_url, notebook_dir=notebooks_dir)
-
             if not args.name:
                 project_name = metadata['project_name']
 
@@ -79,18 +76,18 @@ def main():
         assert project_name, 'project_name must be set'
         assert notebook_fname, 'notebook_fname must be set'
 
-        from ipynblog.render import convert_and_save
+        # update config's pointer to which notebook needs to be converted.
+        cfg.nbconvert_input = notebook_fname.replace(temp_proj_root, '')
 
-        from pprint import pprint
         pprint(dict(local_fname=notebook_fname,
-                         output=nbconvert_output,
-                         template=nbconvert_template,
-                         images_dir=images_dir))
+                    output=cfg.nbconvert_output,
+                    template=cfg.nbconvert_template,
+                    images_dir=cfg.images_dir))
 
         convert_and_save(local_fname=notebook_fname,
-                         output=nbconvert_output,
-                         template=nbconvert_template,
-                         images_dir=images_dir)
+                         output=cfg.nbconvert_output,
+                         template=cfg.nbconvert_template,
+                         images_dir=cfg.images_dir)
 
         # if everything converted properly, copy the temporary dir into CWD() and rename it
         print('mv --> ', temp_proj_root, os.path.join(os.getcwd(), project_name))

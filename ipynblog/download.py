@@ -10,6 +10,7 @@ import tempfile
 from dateutil import parser as dt_parser
 
 from ipynblog import utils
+from ipynblog.config import TemplateConfig
 
 _ipynblog_temp_dir = tempfile.mkdtemp(prefix="ipynblog_")
 
@@ -65,13 +66,15 @@ def fetch_colab_gfile(drive, url):
     return colab_file
 
 
-def save_colab_gfile(colab_file, notebook_dir='./notebooks', overwrite=True):
+def save_colab_gfile(colab_file, notebook_dir='./notebooks', overwrite=True,
+                     fname=None):
     """ Downloads an ipynb fmor google colab.
         refs:
         - http://pythonhosted.org/PyDrive/filemanagement.html
         - http://pythonhosted.org/PyDrive/pydrive.html
     """
-    fname = colab_file['title']
+    if not fname:
+        fname = colab_file['title']
     print('fname = %s, notebook_dir=%s' % (fname, notebook_dir))
     if not os.path.isdir(notebook_dir):
         os.makedirs(notebook_dir)
@@ -82,7 +85,7 @@ def save_colab_gfile(colab_file, notebook_dir='./notebooks', overwrite=True):
         raise Exception("%s already exists" % local_fname)
 
     colab_file.GetContentFile(local_fname)
-    return local_fname
+    return local_fname, fname
 
 
 def extract_updated_dt(gfile):
@@ -111,7 +114,7 @@ def extract_last_modified_user(gfile):
     return (email, name)
 
 
-def download_colab(url, notebook_dir=_ipynblog_temp_dir):
+def download_colab(url, notebook_dir=_ipynblog_temp_dir, fname=None):
     """
     Downloads google colab notebook and saves the ipynb file in 'notebook_dir'.
     Extracts GDrive metadata (name, modified timestamp, username) and saves as
@@ -124,15 +127,15 @@ def download_colab(url, notebook_dir=_ipynblog_temp_dir):
     drive = get_gdrive()
     colab_file = fetch_colab_gfile(drive, url)
 
+    colab_extension = colab_file['fileExtension']
     dt = extract_updated_dt(colab_file)
     author_email, author_name = extract_last_modified_user(colab_file)
-    colab_fname = colab_file['title']
-    colab_extension = colab_file['fileExtension']
 
+    notebook_path = save_colab_gfile(colab_file, notebook_dir=notebook_dir,
+                                     fname=fname)
+    colab_fname = os.path.basename(notebook_path)
     project_name = colab_fname.replace('.' + colab_extension, '')
     project_slug = project_name.lower().replace(' ', '_').replace('-', '_')
-
-    notebook_fname = save_colab_gfile(colab_file, notebook_dir=notebook_dir)
 
     metadata = dict(
         project_name=project_name,
@@ -142,8 +145,8 @@ def download_colab(url, notebook_dir=_ipynblog_temp_dir):
         author_email=author_email,
         dt=dt,
     )
-    metadata_fname = utils.dump_yaml(dest_path=notebook_fname + '.yaml', attrs=metadata)
-    return notebook_fname, metadata_fname, metadata
+    metadata_fname = utils.dump_yaml(dest_path=notebook_path + '.yaml', attrs=metadata)
+    return notebook_path, metadata_fname, metadata
 
 
 def main():
@@ -153,13 +156,28 @@ def main():
     parser.add_argument('url', help='URL of colab notebook')
     parser.add_argument('-d', '--dir', help='Download dest dir',
                         default=_ipynblog_temp_dir)
+    parser.add_argument('-c', '--config',
+                        help='YAML config. If provided, overrides args'
+                             'using generated ipynblog.yaml')
     args = parser.parse_args(sys.argv[1:])
     print(args.url)
 
-    notebook_fname, metadata_fname, _ = download_colab(url=args.url,
-                                                       notebook_dir=args.dir)
+    url = args.url
+    notebook_dir = args.dir
+    notebook_fname = None
+
+    if args.config:
+        cfg = TemplateConfig.load_file(args.config).ipynblog_template
+        url = cfg.colab_url
+        notebook_dir = os.path.dirname(cfg.nbconvert_input)
+        # ensure the notebook gets downloaded to a file of the same name,
+        # since its possible for that to change within colab since last sync.
+        notebook_fname = os.path.basename(cfg.nbconvert_input)
+
+    notebook, meta, _ = download_colab(url=url, notebook_dir=notebook_dir,
+                                       notebook_fname=notebook_fname)
     print('Downloaded notebook to {n}, saved metadata to: {m}'
-          .format(n=notebook_fname, m=metadata_fname))
+          .format(n=notebook, m=meta))
 
 
 if __name__ == '__main__':

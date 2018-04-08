@@ -6,6 +6,8 @@ import nbformat
 from traitlets.config import Config
 from nbconvert import HTMLExporter
 
+from ipynblog.config import TemplateConfig
+
 
 def convert_notebook(notebook_file, template_file='basic'):
     notebook = nbformat.read(notebook_file, as_version=4)
@@ -59,12 +61,27 @@ def main():
                         help='Path to nbconvert template to use')
     parser.add_argument('--images-dir',
                         help='Path to extract image assets to')
+    parser.add_argument('-c', '--config',
+                        help='YAML config. If provided, overrides args'
+                             'using generated ipynblog.yaml')
     args = parser.parse_args(sys.argv)
 
-    convert_and_save(local_fname=args.input,
-                     output=args.output,
-                     template=args.template,
-                     images_dir=args.images_dir)
+    local_fname = args.input
+    output = args.output
+    template = args.template
+    images_dir = args.images_dir
+
+    if args.config:
+        cfg = TemplateConfig.load_file(args.config).ipynblog_template
+        local_fname = cfg.nbconvert_input
+        output = cfg.nbconvert_output
+        template = cfg.nbconvert_template
+        images_dir = cfg.images_dir
+
+    convert_and_save(local_fname=local_fname,
+                     output=output,
+                     template=template,
+                     images_dir=images_dir)
 
 
 if __name__ == '__main__':
