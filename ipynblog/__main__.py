@@ -54,7 +54,7 @@ def main():
 
         # find the folder in the generated project structure containing the example notebook.
         # this is where the input notebook will get copied into the repo.
-        notebooks_dir = os.path.basename(cfg.nbconvert_input)
+        notebooks_dir = os.path.dirname(cfg.nbconvert_input)
 
         if args.colab_url:
             # record the colab notebook's url in the YAML config, in case sync needed.
@@ -82,13 +82,13 @@ def main():
         # update the YAML file in the generated repo
         t.dump(ipynblog_yaml_path)
 
+        def __tpr(f):
+            return os.path.join(temp_proj_root, f.replace('./', ''))
+
         pprint(dict(local_fname=notebook_fname,
-                    output=cfg.nbconvert_output,
+                    output=__tpr(cfg.nbconvert_output),
                     template=cfg.nbconvert_template,
                     images_dir=cfg.images_dir))
-
-        def __tpr(f):
-            return os.path.join(temp_proj_root, f)
 
         convert_and_save(local_fname=notebook_fname,
                          output=__tpr(cfg.nbconvert_output),
