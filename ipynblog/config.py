@@ -3,8 +3,9 @@ import yaml
 
 
 class YAMLConfigBase(yaml.YAMLObject):
-    def dump(self, *args, **kwargs):
-        return yaml.dump(*args, default_flow_style=False, **kwargs)
+
+    def dump(self, **kwargs):
+        return yaml.dump(data=self, default_flow_style=False, **kwargs)
 
     @classmethod
     def load(cls, *args, **kwargs):
