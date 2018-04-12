@@ -1,19 +1,29 @@
 import io
+import os
+
 import yaml
 import unicodedata
 from six import string_types
 
 
-def load_yaml(path_or_fd):
-    if not path_or_fd:
+def load_yaml(path_or_fd_or_blob):
+    if not path_or_fd_or_blob:
         raise ValueError('path_or_fd must be provided to load YAML from')
 
-    if not isinstance(path_or_fd, string_types):
-        return yaml.load(stream=path_or_fd)
-
-    # TODO should I check if path_or_fd is an actual path (so if a YAML string blob is passed in we can parse it?)
-    with io.open(path_or_fd, encoding='utf-8') as fd:
+    # if the argument is not a string, assume its a file-like and start reading
+    if not isinstance(path_or_fd_or_blob, string_types):
+        fd = path_or_fd_or_blob
         return yaml.load(stream=fd)
+
+    # if path_or_fd is an actual path (so if a YAML string blob is passed in we can parse it?)
+    if os.path.isfile(path_or_fd_or_blob):
+        path = path_or_fd_or_blob
+        with io.open(path, encoding='utf-8') as fd:
+            return yaml.load(stream=fd)
+
+    # otherwise, assume the provided string is the encoded YAML, and load it
+    blob = path_or_fd_or_blob
+    return yaml.load(stream=blob)  # stream = io.BytesIO(.encode(encoding='utf-8'))
 
 
 def dump_yaml(obj, path_or_fd=None):
@@ -105,4 +115,4 @@ class YAMLConfigBase(yaml.YAMLObject):
     @classmethod
     def load_from(cls, path_or_fd):
         # TODO this doesnt really need to be a classmethod since YAML will internally figure out which class to resolve
-        return load_yaml(path_or_fd=path_or_fd)
+        return load_yaml(path_or_fd_or_blob=path_or_fd)

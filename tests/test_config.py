@@ -3,6 +3,8 @@ from __future__ import absolute_import
 import os
 
 from ipynblog.config import *
+from ipynblog.utils import load_yaml
+from ipynblog.utils import dump_yaml
 
 author_email = 'andrew.m.look@gmail.com'
 author_name = 'Andrew Look'
@@ -58,8 +60,17 @@ ipynblog_template: !IpynbTemplate
            images_dir=images_dir,
            colab_url=colab_url)
 
+
 def __load_dump(y):
-    return yaml.dump(yaml.load(y), default_flow_style=False)
+    """
+    For testing purposes, sometimes the test fixture has different spacing/etc.
+    So load & dump the expected result to obtain consistently-formatted data.
+
+    :param y:   input YAML
+    :return:    output YAML (w/ canonical formatting)
+    """
+    return dump_yaml(load_yaml(y))
+
 
 def test_dump_notebook():
     nb = NotebookMetadata(author_email, author_name, colab_url,
@@ -68,7 +79,7 @@ def test_dump_notebook():
 
 
 def test_load_notebook():
-    n = yaml.load(notebook_yaml)
+    n = load_yaml(notebook_yaml)
     assert n.author_email == author_email
 
 
@@ -84,7 +95,7 @@ def test_dump_template_config():
 
 
 def test_load_and_dump_template_config():
-    c = yaml.load(default_template_yaml)
+    c = load_yaml(default_template_yaml)
     t = c.ipynblog_template
     assert t.nbconvert_template == nbconvert_template
     assert t.nbconvert_input == nbconvert_input
