@@ -103,6 +103,6 @@ class YAMLConfigBase(yaml.YAMLObject):
         return dump_yaml(self, path_or_fd=path_or_fd)
 
     @classmethod
-    def load_file(cls, path_or_fd):
+    def load_from(cls, path_or_fd):
         # TODO this doesnt really need to be a classmethod since YAML will internally figure out which class to resolve
         return load_yaml(path_or_fd=path_or_fd)

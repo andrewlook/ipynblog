@@ -49,7 +49,7 @@ def main():
             images_dir: ./public/images/
         """
         ipynblog_yaml_path = os.path.join(temp_proj_root, 'ipynblog.yaml')
-        t = TemplateConfig.load_file(ipynblog_yaml_path)
+        t = TemplateConfig.load_from(ipynblog_yaml_path)
         cfg = t.ipynblog_template
 
         # find the folder in the generated project structure containing the example notebook.

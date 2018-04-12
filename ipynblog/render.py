@@ -72,7 +72,7 @@ def main():
     images_dir = args.images_dir
 
     if args.config:
-        cfg = TemplateConfig.load_file(args.config).ipynblog_template
+        cfg = TemplateConfig.load_from(args.config).ipynblog_template
         local_fname = cfg.nbconvert_input
         output = cfg.nbconvert_output
         template = cfg.nbconvert_template

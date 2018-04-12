@@ -10,7 +10,7 @@ import tempfile
 from dateutil import parser as dt_parser
 
 from ipynblog import utils
-from ipynblog.config import TemplateConfig
+from ipynblog.config import TemplateConfig, NotebookMetadata
 
 _ipynblog_temp_dir = tempfile.mkdtemp(prefix="ipynblog_")
 
@@ -140,7 +140,8 @@ def download_colab(url, notebook_dir=_ipynblog_temp_dir, fname=None, drive=None)
     project_name = colab_fname.replace('.' + colab_extension, '')
     project_slug = project_name.lower().replace(' ', '_').replace('-', '_')
 
-    metadata = dict(
+    metadata_fname = notebook_path + '.yaml'
+    metadata = NotebookMetadata(
         project_name=project_name,
         project_slug=project_slug,
         colab_url=url,
@@ -148,7 +149,7 @@ def download_colab(url, notebook_dir=_ipynblog_temp_dir, fname=None, drive=None)
         author_email=author_email,
         dt=dt,
     )
-    metadata_fname = utils.dump_yaml(dest_path=notebook_path + '.yaml', attrs=metadata)
+    metadata.dump(path_or_fd=metadata_fname)
     return notebook_path, metadata_fname, metadata
 
 
@@ -170,7 +171,7 @@ def main():
     notebook_fname = None
 
     if args.config:
-        cfg = TemplateConfig.load_file(args.config).ipynblog_template
+        cfg = TemplateConfig.load_from(args.config).ipynblog_template
         url = cfg.colab_url
         notebook_dir = os.path.dirname(cfg.nbconvert_input)
         # ensure the notebook gets downloaded to a file of the same name,
