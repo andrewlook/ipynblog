@@ -114,7 +114,7 @@ def extract_last_modified_user(gfile):
     return (email, name)
 
 
-def download_colab(url, notebook_dir=_ipynblog_temp_dir, fname=None):
+def download_colab(url, notebook_dir=_ipynblog_temp_dir, fname=None, drive=None):
     """
     Downloads google colab notebook and saves the ipynb file in 'notebook_dir'.
     Extracts GDrive metadata (name, modified timestamp, username) and saves as
@@ -124,7 +124,10 @@ def download_colab(url, notebook_dir=_ipynblog_temp_dir, fname=None):
     :param notebook_dir:    Directory in which to save (defaults to temp dir)
     :return:                File paths of downloaded notebook and yaml metadata
     """
-    drive = get_gdrive()
+
+    # the CLI will never pass 'drive', but it may be used as a python API
+    if not drive:
+        drive = get_gdrive()
     colab_file = fetch_colab_gfile(drive, url)
 
     colab_extension = colab_file['fileExtension']
