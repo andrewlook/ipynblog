@@ -79,14 +79,9 @@ def _dict2ascii(obj):
     :param obj: dictionary or object
     :return:    dictionary of field names to their values, with any string values converted to ascii encoding.
     """
-
-    # if the argument was a unicode object, convert it to string first
-    if isinstance(obj, six.string_types):
-        # no need to use the decoded object, but if the string-like isn't ascii-friendly it
-        # will raise an exception.
-        if sys.version_info.major < 3 and isinstance(obj, unicode):
-            return unicodedata.normalize(UNICODE_NORMALIZATION, obj).encode('ascii', 'ignore')
-        return obj
+    if sys.version_info.major < 3 and isinstance(obj, unicode):
+        # if the argument was a unicode object, convert it to string first
+        return unicodedata.normalize(UNICODE_NORMALIZATION, obj).encode('ascii', 'ignore')
     elif isinstance(obj, YAMLConfigBase):
         # if the argument was a config object that should first be converted to a dictionary,
         # convert it so that the tail recursion call will use this dict.

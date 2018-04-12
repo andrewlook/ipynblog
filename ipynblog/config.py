@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import os
+
 from ipynblog.utils import YAMLConfigBase
 
 
@@ -30,6 +32,22 @@ class IpynbTemplate(YAMLConfigBase):
         self.nbconvert_output = nbconvert_output
         self.images_dir = images_dir
         self.colab_url = colab_url
+
+    def nbconvert_template_abspath(self, dir):
+        return self._to_abs(dir, self.nbconvert_template)
+
+    def nbconvert_input_abspath(self, dir):
+        return self._to_abs(dir, self.nbconvert_input)
+
+    def nbconvert_output_abspath(self, dir):
+        return self._to_abs(dir, self.nbconvert_output)
+
+    def images_dir_abspath(self, dir):
+        return self._to_abs(dir, self.images_dir)
+
+    def _to_abs(self, dir, rel_path):
+        assert os.path.isdir(dir), '{d} is not a directory'.format(d=dir)
+        return os.path.join(dir, rel_path.replace('./', ''))
 
 
 class NotebookMetadata(YAMLConfigBase):
