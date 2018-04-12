@@ -1,9 +1,12 @@
+from __future__ import print_function
+
 import io
 import os
+import sys
 
+import six
 import yaml
 import unicodedata
-from six import string_types
 
 
 def load_yaml(path_or_fd_or_blob):
@@ -11,7 +14,7 @@ def load_yaml(path_or_fd_or_blob):
         raise ValueError('path_or_fd must be provided to load YAML from')
 
     # if the argument is not a string, assume its a file-like and start reading
-    if not isinstance(path_or_fd_or_blob, string_types):
+    if not isinstance(path_or_fd_or_blob, six.string_types):
         fd = path_or_fd_or_blob
         return yaml.load(stream=fd)
 
@@ -36,7 +39,7 @@ def dump_yaml(obj, path_or_fd=None):
     if not path_or_fd:
         return _dump_formatted_yaml(obj)
 
-    if not isinstance(path_or_fd, string_types):
+    if not isinstance(path_or_fd, six.string_types):
         return _dump_formatted_yaml(obj, stream=path_or_fd)
 
     with io.open(path_or_fd, 'w+') as fd:
@@ -65,36 +68,25 @@ UNICODE_NORMALIZATION = 'NFKD'
 
 def _dict2ascii(obj):
     """
-    HACK: pyYAML is pretty verbose about datatypes, and if a unicode string is used this is what happens:
+    pyYAML is pretty verbose about datatypes, and if a unicode string is used this is what happens:
+    ```
+    nbconvert_input: !!python/unicode './notebooks/deepdream--startup-breakfast--final'
+    ```
 
-        !TemplateConfig
-        ipynblog_template: !IpynbTemplate
-          colab_url: https://colab.research.google.com/drive/1fjv0zVC0l-81QI7AtJjZPMfYRiynOJCB#scrollTo=Kp3QKj1KIaaO
-          images_dir: ./public/images/
-          nbconvert_input: !!python/unicode './notebooks/deepdream--startup-breakfast--final'
-          nbconvert_output: ./public/index.html
-          nbconvert_template: ./nbconvert/distill_v2_svelte.tpl
-
-    Instead, I want this:
-
-        !TemplateConfig
-        ipynblog_template: !IpynbTemplate
-          colab_url: https://colab.research.google.com/drive/1fjv0zVC0l-81QI7AtJjZPMfYRiynOJCB#scrollTo=Kp3QKj1KIaaO
-          images_dir: ./public/images/
-          nbconvert_input: ./notebooks/deepdream--startup-breakfast--final
-          nbconvert_output: ./public/index.html
-          nbconvert_template: ./nbconvert/distill_v2_svelte.tpl
-
-    So I'm converting everything to ascii first. Though supporting unicode isn't really a priority, I figure it's
-    at least worth making an effort to do ascii-folding.
+    Instead I'm converting all string values to ascii first. Though supporting unicode-valued
+    config options isn't really a priority, I figure it's at least worth making an effort to do ascii-folding.
 
     :param obj: dictionary or object
     :return:    dictionary of field names to their values, with any string values converted to ascii encoding.
     """
 
     # if the argument was a unicode object, convert it to string first
-    if isinstance(obj, unicode):
-        return unicodedata.normalize(UNICODE_NORMALIZATION, obj).encode('ascii', 'ignore')
+    if isinstance(obj, six.string_types):
+        # no need to use the decoded object, but if the string-like isn't ascii-friendly it
+        # will raise an exception.
+        if sys.version_info.major < 3 and isinstance(obj, unicode):
+            return unicodedata.normalize(UNICODE_NORMALIZATION, obj).encode('ascii', 'ignore')
+        return obj
     elif isinstance(obj, YAMLConfigBase):
         # if the argument was a config object that should first be converted to a dictionary,
         # convert it so that the tail recursion call will use this dict.

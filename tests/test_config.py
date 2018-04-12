@@ -1,6 +1,9 @@
 from __future__ import absolute_import
 
 import os
+import sys
+
+import pytest
 
 from ipynblog.config import *
 from ipynblog.utils import load_yaml
@@ -104,6 +107,48 @@ def test_load_and_dump_template_config():
     assert t.colab_url == None
 
     t.colab_url = colab_url
+    t.nbconvert_input = updated_nbconvert_input
+
+    # assert __load_dump(colab_template_yaml) == c.dump()
+    assert c.dump().strip() == """
+ipynblog_template:
+  colab_url: https://colab.research.google.com/drive/1fjv0zVC0l-81QI7AtJjZPMfYRiynOJCB#scrollTo=Kp3QKj1KIaaO
+  images_dir: ./public/images/
+  nbconvert_input: ./notebooks/deepdream--startup-breakfast--final
+  nbconvert_output: ./public/index.html
+  nbconvert_template: ./nbconvert/distill_v2_svelte.tpl
+""".strip()
+
+
+@pytest.mark.skipif(sys.version_info.major >= 3, reason="py2 only")
+def test_no_unicode_preamble():
+    """
+    pyYAML is pretty verbose about datatypes, and if a unicode string is used this is what happens:
+
+        !TemplateConfig
+        ipynblog_template: !IpynbTemplate
+          colab_url: https://colab.research.google.com/drive/1fjv0zVC0l-81QI7AtJjZPMfYRiynOJCB#scrollTo=Kp3QKj1KIaaO
+          images_dir: ./public/images/
+          nbconvert_input: !!python/unicode './notebooks/deepdream--startup-breakfast--final'
+          nbconvert_output: ./public/index.html
+          nbconvert_template: ./nbconvert/distill_v2_svelte.tpl
+
+    Instead, I want this:
+
+        !TemplateConfig
+        ipynblog_template: !IpynbTemplate
+          colab_url: https://colab.research.google.com/drive/1fjv0zVC0l-81QI7AtJjZPMfYRiynOJCB#scrollTo=Kp3QKj1KIaaO
+          images_dir: ./public/images/
+          nbconvert_input: ./notebooks/deepdream--startup-breakfast--final
+          nbconvert_output: ./public/index.html
+          nbconvert_template: ./nbconvert/distill_v2_svelte.tpl
+    """
+    c = load_yaml(default_template_yaml)
+    t = c.ipynblog_template
+
+    # explicitly change some props to unicode type (py2 only)
+    t.colab_url = unicode(colab_url)
     t.nbconvert_input = unicode(updated_nbconvert_input)
 
     assert __load_dump(colab_template_yaml) == c.dump()
+
