@@ -55,6 +55,14 @@ def _dump_formatted_yaml(obj, stream=None):
                      stream=stream)
 
 
+# From https://docs.python.org/2/library/unicodedata.html#unicodedata.normalize:
+#   "The normal form KD (NFKD) will apply the compatibility decomposition, i.e.
+#   replace all compatibility characters with their equivalents. The normal form
+#   KC (NFKC) first applies the compatibility decomposition, followed by the
+#   canonical composition."
+UNICODE_NORMALIZATION = 'NFKD'
+
+
 def _dict2ascii(obj):
     """
     HACK: pyYAML is pretty verbose about datatypes, and if a unicode string is used this is what happens:
@@ -84,24 +92,20 @@ def _dict2ascii(obj):
     :return:    dictionary of field names to their values, with any string values converted to ascii encoding.
     """
 
-    # From https://docs.python.org/2/library/unicodedata.html#unicodedata.normalize:
-    #   "The normal form KD (NFKD) will apply the compatibility decomposition, i.e.
-    #   replace all compatibility characters with their equivalents. The normal form
-    #   KC (NFKC) first applies the compatibility decomposition, followed by the
-    #   canonical composition."
-    UNICODE_NORMALIZATION = 'NFKD'
-
-    # if an object (YAML config object) was passed in, convert it to dictionary representation
-    # TODO verify that non-dict objects are actually YAMLObject?
-    if not isinstance(obj, dict):
+    # if the argument was a unicode object, convert it to string first
+    if isinstance(obj, unicode):
+        return unicodedata.normalize(UNICODE_NORMALIZATION, obj).encode('ascii', 'ignore')
+    elif isinstance(obj, YAMLConfigBase):
+        # if the argument was a config object that should first be converted to a dictionary,
+        # convert it so that the tail recursion call will use this dict.
         obj = obj.__dict__
+    elif not isinstance(obj, dict):
+        # if it was anything besides a dict, no recursive call needed, just return 'obj' as-is
+        return obj
 
-    def __ascii(v):
-        return v \
-            if type(v) != unicode \
-            else unicodedata.normalize(UNICODE_NORMALIZATION, v).encode('ascii', 'ignore')
-
-    return {k: __ascii(v) for k, v in obj.items()}
+    # this tail recursion call should only take place if 'obj' was a dict,
+    # or subclassed YAMLConfigBase.
+    return {k: _dict2ascii(v) for k, v in obj.items()}
 
 
 class YAMLConfigBase(yaml.YAMLObject):
