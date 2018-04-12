@@ -1,9 +1,6 @@
 from __future__ import print_function
 
 import subprocess
-import io
-import yaml
-import os
 
 
 def call(x, **kwargs):
