@@ -104,6 +104,6 @@ def test_load_and_dump_template_config():
     assert t.colab_url == None
 
     t.colab_url = colab_url
-    t.nbconvert_input = updated_nbconvert_input
+    t.nbconvert_input = unicode(updated_nbconvert_input)
 
     assert __load_dump(colab_template_yaml) == c.dump()
